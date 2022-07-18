@@ -1,6 +1,9 @@
 const express= require('express');
 const router = express.Router();
-const urlCodeController = require('../controllers/urlController')
+const urlController = require('../controllers/urlController')
+
+
+router.get('/:urlCode',urlController.getUrl);
 
 
 
