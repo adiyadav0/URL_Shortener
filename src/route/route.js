@@ -1,12 +1,10 @@
-const express= require('express');
+const express = require("express");
 const router = express.Router();
-const urlController = require('../controllers/urlController')
+const urlController = require("../controllers/urlController");
 
-
-router.get('/:urlCode',urlController.getUrl);
-
-
-router.post('/url/shorten', urlController.shortenUrl)
-
-
-module.exports= router;
+router.post("/url/shorten", urlController.shortenUrl);
+router.get("/:urlCode", urlController.getUrl);
+router.all('/**', function(req,res){
+    res.status(400).send({status:false,message:"Invaild params"})
+})
+module.exports = router;

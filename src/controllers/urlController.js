@@ -4,14 +4,14 @@ const validUrl = require("valid-url");
 
 const shortenUrl = async function (req, res) {
   try {
-    const longUrl = req.body.longUrl;
+    const longUrl = req.body.longUrl.trim();
     const baseUrl = "http://localhost:3000/";
 
     if (Object.keys(req.body).length === 0) {
       res.status(400).send({ status: false, message: "Please provide url" });
       return;
     }
-    if (!longUrl || typeof longUrl == "undefined" || typeof longUrl == "null" || longUrl.trim().length==0) {
+    if (!longUrl || typeof longUrl == "undefined" || typeof longUrl == "null" || longUrl.length==0) {
       res.status(400).send({ status: false, message: "Please enter longUrl" });
       return;
     }
@@ -53,10 +53,6 @@ const getUrl = async (req, res) => {
     if (dbUrl) {
       return res.status(302).redirect(
         dbUrl.longUrl
-        /*{
-				status: true,
-				data: dbUrl.longUrl,
-			}*/
       );
     } else {
       return res.status(404).send({
