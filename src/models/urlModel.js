@@ -20,6 +20,6 @@ const urlSchema = new mongoose.Schema({
          trim:true
         }
 
-},{timetamps:true});
+},{timestamps:true});
 
 module.exports= mongoose.model('urlShortener',urlSchema)
