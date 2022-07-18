@@ -7,8 +7,12 @@ const shortenUrl = async function (req, res) {
     const longUrl = req.body.longUrl;
     const baseUrl = "http://localhost:3000/";
 
-    if (Object.keys(longUrl).length === 0) {
+    if (Object.keys(req.body).length === 0) {
       res.status(400).send({ status: false, message: "Please provide url" });
+      return;
+    }
+    if (!longUrl || typeof longUrl == "undefined" || typeof longUrl == "null" || longUrl.trim().length==0) {
+      res.status(400).send({ status: false, message: "Please enter longUrl" });
       return;
     }
     if (!validUrl.isUri(longUrl)) {
