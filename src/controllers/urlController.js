@@ -53,10 +53,7 @@ const getUrl = async (req, res) => {
     if (dbUrl) {
       return res.status(302).redirect(
         dbUrl.longUrl
-        /*{
-				status: true,
-				data: dbUrl.longUrl,
-			}*/
+
       );
     } else {
       return res.status(404).send({
