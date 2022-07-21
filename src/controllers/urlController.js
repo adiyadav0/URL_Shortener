@@ -1,7 +1,7 @@
 const urlModel = require("../models/urlModel");
 const shortid = require("shortid");
 const validUrl = require("valid-url");
-const redis = require("redis")
+const redis = require("redis");
 const { promisify } = require("util");
 
 //Connect to Redis
@@ -21,7 +21,6 @@ redisClient.on("connect", async function () {
 //Connection setup for redis
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
-
 
 const shortenUrl = async function (req, res) {
   try {
@@ -48,7 +47,7 @@ const shortenUrl = async function (req, res) {
     const trimmedLongUrl = longUrl.trim();
     const isUrlShortened = await urlModel.findOne({ longUrl: trimmedLongUrl });
     if (isUrlShortened) {
-      res.status(400).send({
+      res.status(409).send({
         status: false,
         message: "Given url already has been shortened!!",
         shortUrl: isUrlShortened.shortUrl,
@@ -75,8 +74,8 @@ const getUrl = async (req, res) => {
   try {
     const url = req.params.urlCode;
     let getCachedUrlCode = await GET_ASYNC(`${url}`);
-    if(getCachedUrlCode){
-      let urlDetailObj = JSON.parse(getCachedUrlCode)
+    if (getCachedUrlCode) {
+      let urlDetailObj = JSON.parse(getCachedUrlCode);
       return res.status(302).redirect(urlDetailObj.longUrl);
     }
     const dbUrl = await urlModel.findOne({ urlCode: url });
@@ -86,9 +85,8 @@ const getUrl = async (req, res) => {
         message: "url code is not found",
       });
     } else {
-      await SET_ASYNC(`${url}`, JSON.stringify(dbUrl));
+      await SET_ASYNC(`${url}`, JSON.stringify(dbUrl), "EX", 60);
       return res.status(302).redirect(dbUrl.longUrl);
-      
     }
   } catch (err) {
     return res.status(500).send({
