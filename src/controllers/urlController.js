@@ -47,9 +47,8 @@ const shortenUrl = async function (req, res) {
     const trimmedLongUrl = longUrl.trim();
     const isUrlShortened = await urlModel.findOne({ longUrl: trimmedLongUrl });
     if (isUrlShortened) {
-      res.status(409).send({
-        status: false,
-        message: "Given url already has been shortened!!",
+      res.status(200).send({
+        status: true,
         shortUrl: isUrlShortened.shortUrl,
       });
       return;
