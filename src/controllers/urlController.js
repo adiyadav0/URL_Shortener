@@ -1,7 +1,7 @@
 const urlModel = require("../models/urlModel");
 const shortid = require("shortid");
 const validUrl = require("valid-url");
-const redis = require("redis")
+const redis = require("redis");
 const { promisify } = require("util");
 
 //Connect to Redis
@@ -20,9 +20,7 @@ redisClient.on("connect", async function () {
 
 //Connection setup for redis
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
-const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);/// a(source) obejct ko b (desdition) object link krne ke liye ( bind ){connection pull bn rha hai}
-
-
+const GET_ASYNC = promisify(redisClient.GET).bind(redisClient); 
 const shortenUrl = async function (req, res) {
   try {
     if (Object.keys(req.body).length === 0) {
@@ -48,9 +46,8 @@ const shortenUrl = async function (req, res) {
     const trimmedLongUrl = longUrl.trim();
     const isUrlShortened = await urlModel.findOne({ longUrl: trimmedLongUrl });
     if (isUrlShortened) {
-      res.status(409).send({
-        status: false,
-        message: "Given url already has been shortened!!",
+      res.status(200).send({
+        status: true,
         shortUrl: isUrlShortened.shortUrl,
       });
       return;
@@ -75,8 +72,8 @@ const getUrl = async (req, res) => {
   try {
     const url = req.params.urlCode;
     let getCachedUrlCode = await GET_ASYNC(`${url}`);
-    if(getCachedUrlCode){
-      let urlDetailObj = JSON.parse(getCachedUrlCode)
+    if (getCachedUrlCode) {
+      let urlDetailObj = JSON.parse(getCachedUrlCode);
       return res.status(302).redirect(urlDetailObj.longUrl);
     }
     const dbUrl = await urlModel.findOne({ urlCode: url });
@@ -86,9 +83,8 @@ const getUrl = async (req, res) => {
         message: "url code is not found",
       });
     } else {
-      await SET_ASYNC(`${url}`, JSON.stringify(dbUrl), "EX",30 );
+      await SET_ASYNC(`${url}`, JSON.stringify(dbUrl), "EX", 30);
       return res.status(302).redirect(dbUrl.longUrl);
-      
     }
   } catch (err) {
     return res.status(500).send({
